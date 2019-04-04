@@ -1,3 +1,39 @@
+# OAuth 1.0a Request Authorization (patched for use with CM payments API)
+
+Besides the patched code you also need to use it slightly different.
+
+## Setup
+
+```
+  const oauth = new OAuth({
+    consumer: {
+      key: process.env.CONSUMER_KEY,
+      secret: process.env.CONSUMER_KEY // WORKAROUND: for CM Payments API
+    },
+    signature_method: 'HMAC-SHA256',
+    hash_function: hash_sha256,
+    includeBodyHash: false
+  })
+```
+
+## The hash function:
+```
+const hash_sha256 = (baseString, key) => {
+  return Buffer.from(Crypto.createHmac('sha256', key).update(baseString).digest('hex')).toString('base64') // WORKAROUND: for CM Payments API
+}
+```
+
+## Generate headers
+```
+  const headers = oauth.toHeader(oauth.authorize({
+    method,
+    data,
+    url 
+  }, {
+    secret: process.env.CONSUMER_SECRET // WORKAROUND: for CM Payments API
+  }))
+```
+
 # OAuth 1.0a Request Authorization [![semaphore][semaphore-img]][semaphore-url]
 
 [![Join the chat at https://gitter.im/ddo/oauth-1.0a](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ddo/oauth-1.0a?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)

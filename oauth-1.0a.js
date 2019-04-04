@@ -139,10 +139,18 @@ OAuth.prototype.getParameterString = function(request, oauth_data) {
     if (oauth_data.oauth_body_hash) {
         base_string_data = this.sortObject(this.percentEncodeData(this.mergeObject(oauth_data, this.deParamUrl(request.url))));
     } else {
-        base_string_data = this.sortObject(this.percentEncodeData(this.mergeObject(oauth_data, this.mergeObject(request.data, this.deParamUrl(request.url)))));
+        // base_string_data = this.sortObject(this.percentEncodeData(this.mergeObject(oauth_data, this.mergeObject(request.data, this.deParamUrl(request.url)))));
+        base_string_data = this.sortObject(this.percentEncodeData(this.mergeObject(oauth_data, this.deParamUrl(request.url))));
     }
 
     var data_str = '';
+    
+    switch (request.method) {
+    case 'POST':
+    case 'PUT':
+        data_str += request.data + '&';
+        break;
+    }
 
     //base_string_data to string
     for(var i = 0; i < base_string_data.length; i++) {
